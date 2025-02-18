@@ -1,7 +1,3 @@
-using System.Diagnostics;
-using HttpDemo.Models;
-using Microsoft.AspNetCore.Mvc;
-
 namespace HttpDemo.Controllers
 {
     public class HomeController : Controller
@@ -13,14 +9,28 @@ namespace HttpDemo.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync()
         {
+            //using session of asp.net
+            //HttpContext.Session.SetString("Name", "John");
+            //var name = HttpContext.Session.GetString("Name");
+
+            //using custom session
+            var session = HttpContext.GetSession();
+
+            session.SetString("Name", "Tom");
+            await session.CommitAsync();
+
             return View();
         }
 
-        public IActionResult Privacy()
+        public async Task<IActionResult> PrivacyAsync()
         {
-            return View();
+            var session = HttpContext.GetSession();
+            await session.LoadAsync();
+            var name = session.GetString("Name");
+
+            return View("Privacy", name);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

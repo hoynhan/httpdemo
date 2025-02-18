@@ -1,7 +1,20 @@
+using HttpDemo.SessionStorage;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+
+builder.Services.AddSingleton<IMySessionStorageEngine>(service =>
+{
+    var path = Path.Combine(service.GetRequiredService<IHostEnvironment>().ContentRootPath, "sessions");
+    Directory.CreateDirectory(path);
+
+    return new FileSessionStorageEngine(path);
+});
+
+builder.Services.AddSingleton<IMySessionStorage, MySessionStorage>();   
 
 var app = builder.Build();
 
@@ -27,3 +40,4 @@ app.MapControllerRoute(
 
 
 app.Run();
+
