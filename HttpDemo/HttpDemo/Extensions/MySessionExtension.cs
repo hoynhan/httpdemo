@@ -8,23 +8,35 @@ namespace HttpDemo.Extensions
 
         public static ISession GetSession(this HttpContext context)
         {
-            string? sessionId = context.Request.Cookies[SessionIDCookieName];
-            ISession session;
-
-            if (IsSessionIdFormatValid(sessionId))
+            var sessionContainer = context.RequestServices.GetRequiredService<MySessionScopedContainer>();
+            if (sessionContainer.Session != null)
             {
-                session = context.RequestServices.GetRequiredService<IMySessionStorage>().Get(sessionId!);
-                context.Response.Cookies.Append(SessionIDCookieName, session.Id);
-
-                return session;
-
+                return sessionContainer.Session;
             }
             else
             {
-                session = context.RequestServices.GetRequiredService<IMySessionStorage>().Create();
-                context.Response.Cookies.Append(SessionIDCookieName, session.Id);
+                string? sessionId = context.Request.Cookies[SessionIDCookieName];
+                ISession session;
 
-                return session;
+                if (IsSessionIdFormatValid(sessionId))
+                {
+                    session = context.RequestServices.GetRequiredService<IMySessionStorage>().Get(sessionId!);
+                    context.Response.Cookies.Append(SessionIDCookieName, session.Id);
+
+                    sessionContainer.Session = session;
+
+                    return session;
+
+                }
+                else
+                {
+                    session = context.RequestServices.GetRequiredService<IMySessionStorage>().Create();
+                    context.Response.Cookies.Append(SessionIDCookieName, session.Id);
+
+                    sessionContainer.Session = session;
+
+                    return session;
+                }
             }
         }
 

@@ -15,6 +15,7 @@ builder.Services.AddSingleton<IMySessionStorageEngine>(service =>
 });
 
 builder.Services.AddSingleton<IMySessionStorage, MySessionStorage>();   
+builder.Services.AddScoped<MySessionScopedContainer>();
 
 var app = builder.Build();
 
