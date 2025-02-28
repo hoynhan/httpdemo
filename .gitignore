@@ -7,3 +7,5 @@
 /.vs
 /HttpDemo/HttpDemo/bin/Debug/net9.0
 /HttpDemo/HttpDemo/sessions
+/HttpDemo/MySessionIntergrationTest/bin/Debug/net9.0
+/HttpDemo/MySessionIntergrationTest/obj
